@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+    <script src="/src/js/p5.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="controller_container">
+      <div>
+        <input id="bst_input" name="bst_input" placeholder="Podaj wartości drzewa" />
+        <button id="bst_insert_btn">Wstaw wartości</button>
+      </div>
+      <div style="margin-top: 10px;">
+        <button id="bst_draw_btn">Draw BST</button>
+        <button id="bst_dsw_btn">Rebalance using DSW</button>
+        <button id="bst_remove_postorder_btn">Remove post-order</button>
+        <button id="bst_print_inorder">Display in-order</button>
+        <button id="bst_print_preorder">Display pre-order</button>
+        <button id="bst_min_btn">Min search</button>
+        <button id="bst_max_btn">Max search</button>
+      </div>
+    </div>
+    <p>
+      Tablica, z której powstało drzewo BST: <span id="original_set"></span>
+    </p>
+    <p>
+      <div id="bst_inorder">BST in-order:</div>
+      <div id="bst_preorder">BST pre-order:</div>
+      <div id="bst_min_path">BST min value path:</div>
+      <div id="bst_max_path">BST max value path:</div>
+    </p>
+    
+    <div id="canvas_container"></div>
+
+    <script src="/src/js/Controller.js"></script>
+    <script src="/src/js/Node.js"></script>
+    <script src="/src/js/Tree.js"></script>
+    <script src="/src/js/sketch.js"></script>
+    <!-- <script src="/src/js/init.js"></script> -->
+  </body>
+</html>
