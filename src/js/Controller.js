@@ -171,6 +171,4 @@ Controller.prototype.removeNodes = function(e) {
       this.tree.removeNode(nodeToRemove);
     } else return alert('Brak węzła o wartości: ' + value);
   });
-  this.tree.updateCoords();
-  this.drawTreePreOrder();
 };

@@ -67,6 +67,7 @@ Tree.prototype.insertValues = function(elements) {
   elements.forEach(el => {
     this.insertValue(el);
   });
+  this.updateCoords();
   this.controller.drawTreePreOrder();
 };
 

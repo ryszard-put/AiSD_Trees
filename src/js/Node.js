@@ -26,7 +26,11 @@ class Node {
     noStroke();
     textAlign(CENTER, CENTER);
     textSize(20);
-    text(this.value, this.x, this.y);
+    text(
+      this.bf !== undefined ? `${this.value}:${this.bf}` : this.value,
+      this.x,
+      this.y
+    );
     if (this.left) {
       this.left.drawNode();
     }

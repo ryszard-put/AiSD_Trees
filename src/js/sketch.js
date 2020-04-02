@@ -6,6 +6,6 @@ let controller;
 function setup() {
   let canvas = createCanvas(CANVASWIDTH, CANVASHEIGHT);
   canvas.parent('canvas_container');
-  BSTTree = new Tree();
+  BSTTree = new AVL();
   controller = new Controller(BSTTree);
 }
