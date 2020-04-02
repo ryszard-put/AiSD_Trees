@@ -12,8 +12,9 @@ class Controller {
   static MAX_BTN_ID = '#bst_max_btn';
   static ORIGINAL_SET_ID = '#original_set';
   static REMOVE_POSTSORDER_BTN_ID = '#bst_remove_postorder_btn';
-  static DRAW_BTN_ID = '#bst_draw_btn';
+  // static DRAW_BTN_ID = '#bst_draw_btn';
   static DSW_BTN_ID = '#bst_dsw_btn';
+  static REMOVE_NODES_BTN_ID = '#bst_remove_nodes_btn';
 
   // Default values
   static MIN_DEFAULT = 'BST min value path: ';
@@ -42,6 +43,9 @@ class Controller {
     );
     this.drawBtn = document.querySelector(Controller.DRAW_BTN_ID);
     this.dswBtn = document.querySelector(Controller.DSW_BTN_ID);
+    this.removeNodesBtn = document.querySelector(
+      Controller.REMOVE_NODES_BTN_ID
+    );
 
     // Add events to control elements
     this.insertValuesBtn.addEventListener('click', e =>
@@ -54,9 +58,9 @@ class Controller {
     this.removePostOrderBtn.addEventListener('click', e =>
       this.removePostOrder(e)
     );
-    this.drawBtn.addEventListener('click', e => this.drawTreePreOrder(e));
+    // this.drawBtn.addEventListener('click', e => this.drawTreePreOrder(e));
     this.dswBtn.addEventListener('click', e => this.rebalanceTree(e));
-
+    this.removeNodesBtn.addEventListener('click', e => this.removeNodes(e));
     // Share controller with tree
     this.tree.bindController(this);
   }
@@ -151,5 +155,22 @@ Controller.prototype.drawTreePreOrder = function(e) {
 Controller.prototype.rebalanceTree = function(e) {
   e?.preventDefault();
   this.tree.rebalanceDSW();
+  this.drawTreePreOrder();
+};
+
+Controller.prototype.removeNodes = function(e) {
+  e?.preventDefault();
+  let input = prompt('Podaj wartości węzłów do usunięcia');
+  if (!input) return alert('Brak węzłów');
+
+  let values = input.split(' ').map(el => parseInt(el));
+
+  values.forEach(value => {
+    const nodeToRemove = this.tree.findNode(value);
+    if (nodeToRemove) {
+      this.tree.removeNode(nodeToRemove);
+    } else return alert('Brak węzła o wartości: ' + value);
+  });
+  this.tree.updateCoords();
   this.drawTreePreOrder();
 };

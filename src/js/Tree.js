@@ -1,6 +1,7 @@
 class Tree {
   constructor() {
     this.root = null;
+    this.height = null;
     this.controller = null;
     this.originalSet = [];
     this.minPathArr = [];
@@ -29,13 +30,18 @@ Tree.prototype.insertValue = function(value) {
     this.root.x = this.x;
     this.root.y = this.y;
     this.root.level = 0;
+    this.height = 0;
   } else {
+    let counter = 0;
     while (true) {
+      counter++;
       if (value < p.value) {
         if (!p.left) {
           p.left = node;
           break;
-        } else p = p.left;
+        } else {
+          p = p.left;
+        }
       } else {
         if (!p.right) {
           p.right = node;
@@ -45,6 +51,7 @@ Tree.prototype.insertValue = function(value) {
         }
       }
     }
+    this.height = counter;
     node.parent = p;
     node.level = node.parent.level + 1;
     node.y = node.parent.y + this.shiftY;
@@ -60,6 +67,7 @@ Tree.prototype.insertValues = function(elements) {
   elements.forEach(el => {
     this.insertValue(el);
   });
+  this.controller.drawTreePreOrder();
 };
 
 Tree.prototype.findNode = function(value) {
@@ -151,6 +159,25 @@ Tree.prototype.findPredecessor = function(node) {
   return node;
 };
 
+Tree.prototype.removeNode = function(node) {
+  let Y, Z;
+  if (node) {
+    Y = !node.left || !node.right ? node : this.findSuccessor(node);
+
+    Z = Y.left || Y.right;
+
+    if (Z) Z.parent = Y.parent;
+
+    if (!Y.parent) this.root = Z;
+    else if (Y == Y.parent.left) Y.parent.left = Z;
+    else Y.parent.right = Z;
+
+    if (Y != node) node.value = Y.value;
+    Y = null;
+  }
+  this.updateCoords();
+};
+
 Tree.prototype.removePostOrder = function(node = this.root) {
   if (node) {
     node.left = this.removePostOrder(node.left);
@@ -158,8 +185,6 @@ Tree.prototype.removePostOrder = function(node = this.root) {
   }
   return null;
 };
-
-Tree.prototype.removeNode = function(node) {};
 
 Tree.prototype.removeByValue = function(value) {
   this.removeNode(this.findNode(value));
@@ -209,11 +234,8 @@ Tree.prototype.rotR = function(A) {
 };
 
 Tree.prototype.rebalanceDSW = function() {
-  let n = 0,
-    i,
-    s;
+  let n = 0;
   let p = this.root;
-
   while (p) {
     if (p.left) {
       this.rotR(p);
@@ -223,19 +245,17 @@ Tree.prototype.rebalanceDSW = function() {
       p = p.right;
     }
   }
-  s = n + 1 - this.log2(n + 1);
+  let s = n + 1 - 2 ** Math.floor(Math.log2(n + 1));
   p = this.root;
-  for (i = 0; i < s; i++) {
+  for (let i = 1; i <= s; i++) {
     this.rotL(p);
     p = p.parent.right;
   }
-
   n -= s;
-
   while (n > 1) {
-    n >>= 1;
+    n = n >> 1;
     p = this.root;
-    for (i = 0; i < n; i++) {
+    for (let i = 1; i <= n; i++) {
       this.rotL(p);
       p = p.parent.right;
     }
