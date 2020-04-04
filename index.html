@@ -5,43 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/src/css/main.css" />
     <script src="/src/js/p5.min.js"></script>
-    <title>Document</title>
+    <title>BST</title>
   </head>
   <body>
     <div class="controller_container">
       <div>
-        <input id="bst_input" name="bst_input" placeholder="Podaj wartości drzewa" />
-        <button id="bst_insert_btn">Wstaw wartości</button>
+        <input id="input" name="input" placeholder="Podaj wartości drzewa" />
+        <button id="insert_btn">Wstaw wartości</button>
+        <button id="random_fill_btn">Wstaw 10 losowych wartości</button>
       </div>
       <div style="margin-top: 10px;">
-        <!-- <button id="bst_draw_btn">Draw BST</button> -->
-        <button id="bst_dsw_btn">Rebalance using DSW</button>
-        <button id="bst_remove_postorder_btn">Remove post-order</button>
-        <button id="bst_remove_nodes_btn">Remove nodes by values</button>
-        <button id="bst_print_inorder">Display in-order</button>
-        <button id="bst_print_preorder">Display pre-order</button>
-        <button id="bst_min_btn">Min search</button>
-        <button id="bst_max_btn">Max search</button>
+        <!-- <button id="draw_btn">Draw BST</button> -->
+        <button id="dsw_btn">Rebalance using DSW</button>
+        <button id="remove_postorder_btn">Remove post-order</button>
+        <button id="remove_nodes_btn">Remove nodes by values</button>
+        <button id="print_inorder">Display in-order</button>
+        <button id="print_preorder">Display pre-order</button>
+        <button id="min_btn">Min search</button>
+        <button id="max_btn">Max search</button>
       </div>
     </div>
     <p>
-      Tablica, z której powstało drzewo BST: <span id="original_set"></span>
-    </p>
-    <p>
-      <div id="bst_inorder">BST in-order:</div>
-      <div id="bst_preorder">BST pre-order:</div>
-      <div id="bst_min_path">BST min value path:</div>
-      <div id="bst_max_path">BST max value path:</div>
+      <div id="inorder">BST in-order:</div>
+      <div id="preorder">BST pre-order:</div>
+      <div id="min_path">BST min value path:</div>
+      <div id="max_path">BST max value path:</div>
     </p>
     
     <div id="canvas_container"></div>
+    <div class="nav">
+      <a href="/index.html" class="active">BST</a>
+      <a href="/avl.html">AVL</a>
+    </div>
 
     <script src="/src/js/Controller.js"></script>
     <script src="/src/js/Node.js"></script>
-    <script src="/src/js/AVLNode.js"></script>
-    <script src="/src/js/Tree.js"></script>
+    <script src="/src/js/BST.js"></script>
     <script src="/src/js/AVL.js"></script>
-    <script src="/src/js/sketch.js"></script>
+    <script src="/src/js/bst/sketch.js"></script>
     <!-- <script src="/src/js/init.js"></script> -->
   </body>
 </html>

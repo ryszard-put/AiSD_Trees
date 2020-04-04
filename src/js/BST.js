@@ -1,4 +1,4 @@
-class Tree {
+class BST {
   constructor() {
     this.root = null;
     this.height = null;
@@ -21,7 +21,7 @@ class Tree {
   }
 }
 
-Tree.prototype.insertValue = function(value) {
+BST.prototype.insertValue = function(value) {
   let node = new Node(value);
   node.controller = this.controller;
   let p = this.root;
@@ -51,27 +51,29 @@ Tree.prototype.insertValue = function(value) {
         }
       }
     }
-    this.height = counter;
+    this.height = counter > this.height ? counter : this.height;
     node.parent = p;
     node.level = node.parent.level + 1;
-    node.y = node.parent.y + this.shiftY;
-    if (node == node.parent.left) {
-      node.x = node.parent.x - this.shiftX / Math.pow(2, node.level - 1);
-    } else if (node == node.parent.right) {
-      node.x = node.parent.x + this.shiftX / Math.pow(2, node.level - 1);
+    if (this.controller.visualize) {
+      node.y = node.parent.y + this.shiftY;
+      if (node == node.parent.left) {
+        node.x = node.parent.x - this.shiftX / Math.pow(2, node.level - 1);
+      } else if (node == node.parent.right) {
+        node.x = node.parent.x + this.shiftX / Math.pow(2, node.level - 1);
+      }
     }
   }
 };
 
-Tree.prototype.insertValues = function(elements) {
+BST.prototype.insertValues = function(elements) {
   elements.forEach(el => {
-    this.insertValue(el);
+    if (!this.findNode(el)) this.insertValue(el);
   });
   this.updateCoords();
   this.controller.drawTreePreOrder();
 };
 
-Tree.prototype.findNode = function(value) {
+BST.prototype.findNode = function(value) {
   let p = this.root;
   while (p && p.value !== value) {
     if (value < p.value) p = p.left;
@@ -80,7 +82,7 @@ Tree.prototype.findNode = function(value) {
   return p;
 };
 
-Tree.prototype.findMin = function() {
+BST.prototype.findMin = function() {
   let p = this.root;
   while (p) {
     this.minPathArr.push(p.value);
@@ -88,7 +90,7 @@ Tree.prototype.findMin = function() {
   }
 };
 
-Tree.prototype.findMax = function() {
+BST.prototype.findMax = function() {
   let p = this.root;
   while (p) {
     this.maxPathArr.push(p.value);
@@ -96,21 +98,36 @@ Tree.prototype.findMax = function() {
   }
 };
 
-Tree.prototype.inOrder = function(node = this.root) {
+BST.prototype.inOrder = function(node = this.root) {
   if (!node) return;
   this.inOrder(node.left);
   this.inOrderArr.push(node.value);
   this.inOrder(node.right);
 };
 
-Tree.prototype.preOrder = function(node = this.root) {
+BST.prototype.inOrderIterative = function() {
+  let node = this.root,
+    stack = [];
+  while (node || stack.length) {
+    while (node) {
+      stack.push(node);
+      node = node.left;
+    }
+
+    node = stack.pop();
+    this.inOrderArr.push(node.value);
+    node = node.right;
+  }
+};
+
+BST.prototype.preOrder = function(node = this.root) {
   if (!node) return;
   this.preOrderArr.push(node.value);
   this.preOrder(node.left);
   this.preOrder(node.right);
 };
 
-Tree.prototype.minHelper = function(node) {
+BST.prototype.minHelper = function(node) {
   if (node) {
     while (node.left) {
       node = node.left;
@@ -119,7 +136,7 @@ Tree.prototype.minHelper = function(node) {
   return node;
 };
 
-Tree.prototype.maxHelper = function(node) {
+BST.prototype.maxHelper = function(node) {
   if (node) {
     while (node.right) {
       node = node.right;
@@ -128,7 +145,7 @@ Tree.prototype.maxHelper = function(node) {
   return node;
 };
 
-Tree.prototype.findSuccessor = function(node) {
+BST.prototype.findSuccessor = function(node) {
   let r;
   if (node) {
     if (node.right) return this.minHelper(node.right);
@@ -144,7 +161,7 @@ Tree.prototype.findSuccessor = function(node) {
   return node;
 };
 
-Tree.prototype.findPredecessor = function(node) {
+BST.prototype.findPredecessor = function(node) {
   let r;
   if (node) {
     if (node.left) return this.maxHelper(node.left);
@@ -160,7 +177,7 @@ Tree.prototype.findPredecessor = function(node) {
   return node;
 };
 
-Tree.prototype.removeNode = function(node) {
+BST.prototype.removeNode = function(node) {
   let Y, Z;
   if (node) {
     Y = !node.left || !node.right ? node : this.findSuccessor(node);
@@ -175,30 +192,30 @@ Tree.prototype.removeNode = function(node) {
 
     if (Y != node) node.value = Y.value;
     Y = null;
+    this.updateCoords();
+    this.updateHeight();
   }
-  this.updateCoords();
 };
 
-Tree.prototype.removePostOrder = function(node = this.root) {
-  if (node) {
-    node.left = this.removePostOrder(node.left);
-    node.right = this.removePostOrder(node.right);
-  }
+BST.prototype.removePostOrder = async function(node = this.root) {
+  if (node.left) node.left = await this.removePostOrder(node.left);
+  if (node.right) node.right = await this.removePostOrder(node.right);
+  await this.controller.drawTreePreOrder();
   return null;
 };
 
-Tree.prototype.removeByValue = function(value) {
+BST.prototype.removeByValue = function(value) {
   this.removeNode(this.findNode(value));
 };
 
-Tree.prototype.log2 = function(x) {
+BST.prototype.log2 = function(x) {
   let y = 1;
   while ((x >>= 1) > 0) y <<= 1;
 
   return y;
 };
 
-Tree.prototype.rotL = function(A) {
+BST.prototype.rotL = function(A) {
   let B = A.right,
     p = A.parent;
   if (B) {
@@ -216,7 +233,7 @@ Tree.prototype.rotL = function(A) {
   }
 };
 
-Tree.prototype.rotR = function(A) {
+BST.prototype.rotR = function(A) {
   let B = A.left,
     p = A.parent;
   if (B) {
@@ -234,7 +251,22 @@ Tree.prototype.rotR = function(A) {
   }
 };
 
-Tree.prototype.rebalanceDSW = function() {
+BST.prototype.updateHeight = function() {
+  this.height = 0;
+  this.newHeight();
+};
+
+BST.prototype.newHeight = function(node = this.root, counter = 0) {
+  if (!node) {
+    this.height = null;
+    return;
+  }
+  if (node.left) this.newHeight(node.left, counter + 1);
+  if (node.right) this.newHeight(node.right, counter + 1);
+  if (counter > this.height) this.height = counter;
+};
+
+BST.prototype.rebalanceDSW = function() {
   let n = 0;
   let p = this.root;
   while (p) {
@@ -262,9 +294,11 @@ Tree.prototype.rebalanceDSW = function() {
     }
   }
   this.updateCoords();
+  //this.updateHeight();
 };
 
-Tree.prototype.updateCoords = function() {
+BST.prototype.updateCoords = function() {
+  if (!this.controller.visualize) return;
   if (this.root) {
     this.root.x = this.x;
     this.root.y = this.y;

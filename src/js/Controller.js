@@ -1,20 +1,20 @@
 class Controller {
   // HTML elements
-  static INPUT_ID = '#bst_input';
-  static INSERT_BTN_ID = '#bst_insert_btn';
-  static INORDER_ID = '#bst_inorder';
-  static PREORDER_ID = '#bst_preorder';
-  static INORDER_BTN_ID = '#bst_print_inorder';
-  static PREORDER_BTN_ID = '#bst_print_preorder';
-  static MIN_PATH_ID = '#bst_min_path';
-  static MAX_PATH_ID = '#bst_max_path';
-  static MIN_BTN_ID = '#bst_min_btn';
-  static MAX_BTN_ID = '#bst_max_btn';
+  static INPUT_ID = '#input';
+  static INSERT_BTN_ID = '#insert_btn';
+  static RANDOM_FILL_BTN_ID = '#random_fill_btn';
+  static INORDER_ID = '#inorder';
+  static PREORDER_ID = '#preorder';
+  static INORDER_BTN_ID = '#print_inorder';
+  static PREORDER_BTN_ID = '#print_preorder';
+  static MIN_PATH_ID = '#min_path';
+  static MAX_PATH_ID = '#max_path';
+  static MIN_BTN_ID = '#min_btn';
+  static MAX_BTN_ID = '#max_btn';
   static ORIGINAL_SET_ID = '#original_set';
-  static REMOVE_POSTSORDER_BTN_ID = '#bst_remove_postorder_btn';
-  // static DRAW_BTN_ID = '#bst_draw_btn';
-  static DSW_BTN_ID = '#bst_dsw_btn';
-  static REMOVE_NODES_BTN_ID = '#bst_remove_nodes_btn';
+  static REMOVE_POSTSORDER_BTN_ID = '#remove_postorder_btn';
+  static DSW_BTN_ID = '#dsw_btn';
+  static REMOVE_NODES_BTN_ID = '#remove_nodes_btn';
 
   // Default values
   static MIN_DEFAULT = 'BST min value path: ';
@@ -22,11 +22,15 @@ class Controller {
   static INORDER_DEFAULT = 'BST in-order: ';
   static PREORDER_DEFAULT = 'BST pre-order: ';
 
-  constructor(tree) {
+  constructor(tree, type) {
     this.tree = tree;
+    this.type = type;
+
+    this.visualize = true;
     // Get control elements
     this.inputField = document.querySelector(Controller.INPUT_ID);
     this.insertValuesBtn = document.querySelector(Controller.INSERT_BTN_ID);
+    this.randomFillBtn = document.querySelector(Controller.RANDOM_FILL_BTN_ID);
     this.inOrderContainer = document.querySelector(Controller.INORDER_ID);
     this.preOrderContainer = document.querySelector(Controller.PREORDER_ID);
     this.inOrderBtn = document.querySelector(Controller.INORDER_BTN_ID);
@@ -51,6 +55,7 @@ class Controller {
     this.insertValuesBtn.addEventListener('click', e =>
       this.handleInsertion(e)
     );
+    this.randomFillBtn.addEventListener('click', e => this.randomFill(e));
     this.minPathBtn.addEventListener('click', e => this.findMinPath(e));
     this.maxPathBtn.addEventListener('click', e => this.findMaxPath(e));
     this.inOrderBtn.addEventListener('click', e => this.inOrder(e));
@@ -66,11 +71,37 @@ class Controller {
   }
 }
 
+Controller.prototype.checkPerformance = function(methodName, ...rest) {
+  if (this.visualize) return alert('Brak testów w trybie prezentacyjnym');
+  let t0 = performance.now();
+  this.tree[methodName](...rest);
+  let t1 = performance.now();
+  console.log(methodName, `${t1 - t0} ms`);
+};
+
+Controller.prototype.testCreateTree = function(amount) {
+  const set = this.generateSet(amount);
+  this.checkPerformance('insertValues', set);
+};
+
+Controller.prototype.testMinSearch = function() {
+  this.checkPerformance('findMin');
+};
+
+Controller.prototype.testInorder = function() {
+  this.checkPerformance('inOrderIterative');
+};
+
+Controller.prototype.testRebalanceBST = function() {
+  if (this.type === 'bst') this.checkPerformance('rebalanceDSW', set);
+  else alert('Akcja dozwolona tylko dla BST');
+};
+
 Controller.prototype.validateInput = function() {
   const { value } = this.inputField;
   let values = value
     .split(' ')
-    .filter(el => !isNaN(el))
+    .filter(el => !isNaN(el) && el)
     .map(el => parseInt(el));
   return values;
 };
@@ -82,16 +113,39 @@ Controller.prototype.handleInsertion = function(e) {
   if (elements.length !== 0) {
     this.tree.originalSet.push(...elements);
     this.tree.insertValues(elements);
-    this.originalSetContainer.textContent = JSON.stringify(
-      this.tree.originalSet
-    );
-  }
+  } else alert('Błędne dane');
 };
 
-Controller.prototype.removePostOrder = function(e) {
-  e.preventDefault();
-  this.tree.root = this.tree.removePostOrder();
-  this.tree.originalSet = [];
+Controller.prototype.randomFill = function(e) {
+  e?.preventDefault();
+  let values = [];
+  let max = 20,
+    min = 1;
+  for (let i = 0; i < 10; i++) {
+    while (true) {
+      let value = Math.floor(Math.random() * (max - min)) + min;
+      if (values.indexOf(value) == -1) {
+        values.push(value);
+        break;
+      }
+    }
+  }
+  this.tree.insertValues(values);
+};
+
+Controller.prototype.generateSet = function(amount) {
+  let set = [];
+  for (let i = amount; i > 0; i--) {
+    set.push(i);
+  }
+  return set;
+};
+
+Controller.prototype.removePostOrder = async function(e) {
+  e?.preventDefault();
+  if (!this.tree.root) return alert('Błąd, drzewo puste');
+  this.tree.root = await this.tree.removePostOrder();
+  this.tree.height = 0;
   this.drawTreePreOrder();
 };
 
@@ -127,7 +181,7 @@ Controller.prototype.resetInOrder = function() {
 Controller.prototype.inOrder = function(e) {
   e.preventDefault();
   this.resetInOrder();
-  this.tree.inOrder();
+  this.tree.inOrderIterative();
   this.inOrderContainer.textContent += this.tree.inOrderArr.join(', ');
 };
 
@@ -143,12 +197,14 @@ Controller.prototype.preOrder = function(e) {
   this.preOrderContainer.textContent += this.tree.preOrderArr.join(', ');
 };
 
-Controller.prototype.drawTreePreOrder = function(e) {
+Controller.prototype.drawTreePreOrder = async function(e) {
   e?.preventDefault();
+  if (!this.visualize) return;
   background(36);
   if (this.tree.root) {
     this.tree.root.drawLines();
     this.tree.root.drawNode();
+    await sleep(1000);
   }
 };
 
@@ -158,17 +214,19 @@ Controller.prototype.rebalanceTree = function(e) {
   this.drawTreePreOrder();
 };
 
-Controller.prototype.removeNodes = function(e) {
+Controller.prototype.removeNodes = async function(e) {
   e?.preventDefault();
+  if (!this.tree.root) return alert('Błąd, drzewo puste');
   let input = prompt('Podaj wartości węzłów do usunięcia');
   if (!input) return alert('Brak węzłów');
 
   let values = input.split(' ').map(el => parseInt(el));
 
-  values.forEach(value => {
+  for (value of values) {
     const nodeToRemove = this.tree.findNode(value);
     if (nodeToRemove) {
       this.tree.removeNode(nodeToRemove);
-    } else return alert('Brak węzła o wartości: ' + value);
-  });
+      await this.drawTreePreOrder();
+    } else alert('Brak węzła o wartości: ' + value);
+  }
 };

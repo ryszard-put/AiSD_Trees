@@ -1,11 +1,12 @@
 const CANVASWIDTH = 1000;
 const CANVASHEIGHT = 700;
+let sleep = ms => new Promise(r => setTimeout(r, ms));
 
-let BSTTree;
+let Tree;
 let controller;
 function setup() {
   let canvas = createCanvas(CANVASWIDTH, CANVASHEIGHT);
   canvas.parent('canvas_container');
-  BSTTree = new AVL();
-  controller = new Controller(BSTTree);
+  Tree = new AVL();
+  controller = new Controller(Tree, 'avl');
 }

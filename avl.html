@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <script src="/src/js/p5.min.js"></script>
+  <title>AVL</title>
+</head>
+
+<body>
+  <div class="controller_container">
+    <div>
+      <input id="input" name="input" placeholder="Podaj wartości drzewa" />
+      <button id="insert_btn">Wstaw wartości</button>
+      <button id="random_fill_btn">Wstaw 10 losowych wartości</button>
+    </div>
+    <div style="margin-top: 10px;">
+      <!-- <button id="draw_btn">Draw BST</button> -->
+      <button id="dsw_btn">Rebalance using DSW</button>
+      <button id="remove_postorder_btn">Remove post-order</button>
+      <button id="remove_nodes_btn">Remove nodes by values</button>
+      <button id="print_inorder">Display in-order</button>
+      <button id="print_preorder">Display pre-order</button>
+      <button id="min_btn">Min search</button>
+      <button id="max_btn">Max search</button>
+    </div>
+  </div>
+  <p>
+    <div id="inorder">BST in-order:</div>
+    <div id="preorder">BST pre-order:</div>
+    <div id="min_path">BST min value path:</div>
+    <div id="max_path">BST max value path:</div>
+  </p>
+
+  <div id="canvas_container"></div>
+  <div class="nav">
+    <a href="/index.html">BST</a>
+    <a href="/avl.html" class="active">AVL</a>
+  </div>
+
+  <script src="/src/js/Controller.js"></script>
+  <script src="/src/js/Node.js"></script>
+  <script src="/src/js/BST.js"></script>
+  <script src="/src/js/AVL.js"></script>
+  <script src="/src/js/avl/sketch.js"></script>
+  <!-- <script src="/src/js/init.js"></script> -->
+</body>
+
+</html>

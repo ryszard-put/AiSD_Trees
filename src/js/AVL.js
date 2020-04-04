@@ -1,4 +1,4 @@
-class AVL extends Tree {
+class AVL extends BST {
   constructor() {
     super();
   }
@@ -111,7 +111,8 @@ AVL.prototype.rotLR = function(A) {
 AVL.prototype.insertValue = function(value) {
   let r,
     t,
-    newNode = new AVLNode(value);
+    newNode = new Node(value);
+  newNode.bf = 0;
   newNode.controller = this.controller;
   // Faza 1 - wstawianie tak jak w BST
   let p = this.root;
@@ -182,4 +183,79 @@ AVL.prototype.insertValue = function(value) {
       }
     }
   }
+};
+
+AVL.prototype.removeNode = function(node) {
+  let t, y, z, nest;
+  if (node.left && node.right) {
+    y = this.removeNode(this.findPredecessor(node));
+    nest = false;
+  } else {
+    if (node.left) {
+      y = node.left;
+      node.left = null;
+    } else {
+      y = node.right;
+      node.right = null;
+    }
+    node.bf = 0;
+    nest = true;
+  }
+
+  if (y) {
+    y.parent = node.parent;
+    y.left = node.left;
+    if (y.left) y.left.parent = y;
+    y.right = node.right;
+    if (y.right) y.right.parent = y;
+    y.bf = node.bf;
+  }
+
+  if (node.parent) {
+    if (node.parent.left == node) node.parent.left = y;
+    else node.parent.right = y;
+  } else this.root = y;
+
+  if (nest) {
+    z = y;
+    y = node.parent;
+    while (y) {
+      if (!y.bf) {
+        // Przypadek nr 1
+        if (y.left == z) y.bf = -1;
+        else y.bf = 1;
+        break;
+      } else {
+        if ((y.bf == 1 && y.left == z) || (y.bf == -1 && y.right == z)) {
+          // Przypadek nr 2
+          y.bf = 0;
+          z = y;
+          y = y.parent;
+        } else {
+          if (y.left == z) t = y.right;
+          else t = y.left;
+          if (!t.bf) {
+            // Przypadek 3A
+            if (y.bf == 1) this.rorLL(y);
+            else this.rotRR(y);
+            break;
+          } else if (y.bf == t.bf) {
+            // Przypadek 3B
+            if (y.bf == 1) this.rotLL(y);
+            else this.rotRR(y);
+            z = t;
+            y = t.parent;
+          } else {
+            // Przypadek 3C
+            if (y.bf == 1) this.rotLR(y);
+            else this.rotRL(y);
+            z = y.parent;
+            y = z.parent;
+          }
+        }
+      }
+    }
+  }
+  this.updateCoords();
+  return node;
 };
