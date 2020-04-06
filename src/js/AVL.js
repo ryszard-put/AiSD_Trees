@@ -4,7 +4,7 @@ class AVL extends BST {
   }
 }
 
-AVL.prototype.rotRR = function(A) {
+AVL.prototype.rotRR = function (A) {
   let B = A.right,
     p = A.parent;
 
@@ -27,7 +27,7 @@ AVL.prototype.rotRR = function(A) {
   }
 };
 
-AVL.prototype.rotLL = function(A) {
+AVL.prototype.rotLL = function (A) {
   let B = A.left,
     p = A.parent;
 
@@ -50,7 +50,7 @@ AVL.prototype.rotLL = function(A) {
   }
 };
 
-AVL.prototype.rotRL = function(A) {
+AVL.prototype.rotRL = function (A) {
   let B = A.right,
     C = B.left,
     p = A.parent;
@@ -79,7 +79,7 @@ AVL.prototype.rotRL = function(A) {
   C.bf = 0;
 };
 
-AVL.prototype.rotLR = function(A) {
+AVL.prototype.rotLR = function (A) {
   let B = A.left,
     C = B.right,
     p = A.parent;
@@ -108,7 +108,7 @@ AVL.prototype.rotLR = function(A) {
   C.bf = 0;
 };
 
-AVL.prototype.insertValue = function(value) {
+AVL.prototype.insertValue = function (value) {
   let r,
     t,
     newNode = new Node(value);
@@ -121,6 +121,7 @@ AVL.prototype.insertValue = function(value) {
     this.root.x = this.x;
     this.root.y = this.y;
     this.root.level = 0;
+    this.height = 0;
   } else {
     while (true) {
       if (value < p.value) {
@@ -182,10 +183,11 @@ AVL.prototype.insertValue = function(value) {
         }
       }
     }
+    this.updateHeight();
   }
 };
 
-AVL.prototype.removeNode = function(node) {
+AVL.prototype.removeNode = function (node) {
   let t, y, z, nest;
   if (node.left && node.right) {
     y = this.removeNode(this.findPredecessor(node));

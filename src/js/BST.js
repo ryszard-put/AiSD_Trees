@@ -21,7 +21,7 @@ class BST {
   }
 }
 
-BST.prototype.insertValue = function(value) {
+BST.prototype.insertValue = function (value) {
   let node = new Node(value);
   node.controller = this.controller;
   let p = this.root;
@@ -65,15 +65,15 @@ BST.prototype.insertValue = function(value) {
   }
 };
 
-BST.prototype.insertValues = function(elements) {
-  elements.forEach(el => {
+BST.prototype.insertValues = function (elements) {
+  elements.forEach((el) => {
     if (!this.findNode(el)) this.insertValue(el);
   });
   this.updateCoords();
   this.controller.drawTreePreOrder();
 };
 
-BST.prototype.findNode = function(value) {
+BST.prototype.findNode = function (value) {
   let p = this.root;
   while (p && p.value !== value) {
     if (value < p.value) p = p.left;
@@ -82,7 +82,7 @@ BST.prototype.findNode = function(value) {
   return p;
 };
 
-BST.prototype.findMin = function() {
+BST.prototype.findMin = function () {
   let p = this.root;
   while (p) {
     this.minPathArr.push(p.value);
@@ -90,7 +90,7 @@ BST.prototype.findMin = function() {
   }
 };
 
-BST.prototype.findMax = function() {
+BST.prototype.findMax = function () {
   let p = this.root;
   while (p) {
     this.maxPathArr.push(p.value);
@@ -98,14 +98,14 @@ BST.prototype.findMax = function() {
   }
 };
 
-BST.prototype.inOrder = function(node = this.root) {
+BST.prototype.inOrder = function (node = this.root) {
   if (!node) return;
   this.inOrder(node.left);
   this.inOrderArr.push(node.value);
   this.inOrder(node.right);
 };
 
-BST.prototype.inOrderIterative = function() {
+BST.prototype.inOrderIterative = function () {
   let node = this.root,
     stack = [];
   while (node || stack.length) {
@@ -120,14 +120,14 @@ BST.prototype.inOrderIterative = function() {
   }
 };
 
-BST.prototype.preOrder = function(node = this.root) {
+BST.prototype.preOrder = function (node = this.root) {
   if (!node) return;
   this.preOrderArr.push(node.value);
   this.preOrder(node.left);
   this.preOrder(node.right);
 };
 
-BST.prototype.minHelper = function(node) {
+BST.prototype.minHelper = function (node) {
   if (node) {
     while (node.left) {
       node = node.left;
@@ -136,7 +136,7 @@ BST.prototype.minHelper = function(node) {
   return node;
 };
 
-BST.prototype.maxHelper = function(node) {
+BST.prototype.maxHelper = function (node) {
   if (node) {
     while (node.right) {
       node = node.right;
@@ -145,7 +145,7 @@ BST.prototype.maxHelper = function(node) {
   return node;
 };
 
-BST.prototype.findSuccessor = function(node) {
+BST.prototype.findSuccessor = function (node) {
   let r;
   if (node) {
     if (node.right) return this.minHelper(node.right);
@@ -161,7 +161,7 @@ BST.prototype.findSuccessor = function(node) {
   return node;
 };
 
-BST.prototype.findPredecessor = function(node) {
+BST.prototype.findPredecessor = function (node) {
   let r;
   if (node) {
     if (node.left) return this.maxHelper(node.left);
@@ -177,7 +177,7 @@ BST.prototype.findPredecessor = function(node) {
   return node;
 };
 
-BST.prototype.removeNode = function(node) {
+BST.prototype.removeNode = function (node) {
   let Y, Z;
   if (node) {
     Y = !node.left || !node.right ? node : this.findSuccessor(node);
@@ -197,25 +197,18 @@ BST.prototype.removeNode = function(node) {
   }
 };
 
-BST.prototype.removePostOrder = async function(node = this.root) {
+BST.prototype.removePostOrder = async function (node = this.root) {
   if (node.left) node.left = await this.removePostOrder(node.left);
   if (node.right) node.right = await this.removePostOrder(node.right);
   await this.controller.drawTreePreOrder();
   return null;
 };
 
-BST.prototype.removeByValue = function(value) {
+BST.prototype.removeByValue = function (value) {
   this.removeNode(this.findNode(value));
 };
 
-BST.prototype.log2 = function(x) {
-  let y = 1;
-  while ((x >>= 1) > 0) y <<= 1;
-
-  return y;
-};
-
-BST.prototype.rotL = function(A) {
+BST.prototype.rotL = function (A) {
   let B = A.right,
     p = A.parent;
   if (B) {
@@ -233,7 +226,7 @@ BST.prototype.rotL = function(A) {
   }
 };
 
-BST.prototype.rotR = function(A) {
+BST.prototype.rotR = function (A) {
   let B = A.left,
     p = A.parent;
   if (B) {
@@ -251,12 +244,12 @@ BST.prototype.rotR = function(A) {
   }
 };
 
-BST.prototype.updateHeight = function() {
+BST.prototype.updateHeight = function () {
   this.height = 0;
   this.newHeight();
 };
 
-BST.prototype.newHeight = function(node = this.root, counter = 0) {
+BST.prototype.newHeight = function (node = this.root, counter = 0) {
   if (!node) {
     this.height = null;
     return;
@@ -266,7 +259,7 @@ BST.prototype.newHeight = function(node = this.root, counter = 0) {
   if (counter > this.height) this.height = counter;
 };
 
-BST.prototype.rebalanceDSW = function() {
+BST.prototype.rebalanceDSW = function () {
   let n = 0;
   let p = this.root;
   while (p) {
@@ -294,10 +287,10 @@ BST.prototype.rebalanceDSW = function() {
     }
   }
   this.updateCoords();
-  //this.updateHeight();
+  this.updateHeight();
 };
 
-BST.prototype.updateCoords = function() {
+BST.prototype.updateCoords = function () {
   if (!this.controller.visualize) return;
   if (this.root) {
     this.root.x = this.x;

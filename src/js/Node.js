@@ -9,14 +9,6 @@ class Node {
     // TODO: display properties
   }
 
-  hasValue() {
-    return this.value !== null;
-  }
-
-  hasParent() {
-    return this.parent !== null;
-  }
-
   drawNode() {
     stroke(255);
     fill(40);
